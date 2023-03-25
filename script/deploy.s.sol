@@ -5,11 +5,11 @@ import "../contracts/interfaces/IDiamondCut.sol";
 import "../contracts/facets/DiamondCutFacet.sol";
 import "../contracts/facets/DiamondLoupeFacet.sol";
 import "../contracts/facets/OwnershipFacet.sol";
-import "../lib/forge-std/src/Test.sol";
+import "../lib/forge-std/src/Script.sol";
 import "../contracts/Diamond.sol";
 import "../contracts/facets/Assetbuyingfacet.sol";
 
-contract DiamondDeployer is Test, IDiamondCut {
+contract DiamondDeployer is Script, IDiamondCut {
     //contract types of facets to be deployed
     Diamond diamond;
     DiamondCutFacet dCutFacet;
@@ -17,10 +17,14 @@ contract DiamondDeployer is Test, IDiamondCut {
     OwnershipFacet ownerF;
     Assetbuyingfacet AssetF;
 
-    function testDeployDiamond() public {
+
+   address deployer =  0xE6e2595f5f910c8A6c4cf42267Ca350c6BA8c054;
+    function run() public {
+        uint256 key = vm.envUint("private_key");
+        vm.startBroadcast(key);
         //deploy facets
         dCutFacet = new DiamondCutFacet();
-        diamond = new Diamond(address(this), address(dCutFacet));
+        diamond = new Diamond(deployer, address(dCutFacet));
         dLoupe = new DiamondLoupeFacet();
         ownerF = new OwnershipFacet();
         AssetF  = new Assetbuyingfacet();
@@ -46,11 +50,10 @@ contract DiamondDeployer is Test, IDiamondCut {
             })
         );
 
-        //upgrade diamond
+        
         IDiamondCut(address(diamond)).diamondCut(cut, address(0x0), "");
-
-        //call a function
         DiamondLoupeFacet(address(diamond)).facetAddresses();
+         vm.stopBroadcast();
 
         console.log(address(dCutFacet));
         console.log(address(diamond));
@@ -72,7 +75,7 @@ contract DiamondDeployer is Test, IDiamondCut {
     }
 
        function testAssetFacet() public {
-        testDeployDiamond();
+        run();
         FacetCut[] memory slice = new FacetCut[](1);
 
         slice[0] = ( FacetCut({
