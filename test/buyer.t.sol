@@ -2,9 +2,9 @@
 pragma solidity ^0.8.13;
 
 import "../lib/forge-std/src/Test.sol";
-import "../NFT.sol";
+import "../test/NFT.sol";
 import "../lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol";
-import "../contracts/facets/Assetbuyingfacet.sol";
+import "../contracts/facets/AssetbuyingFacet.sol";
 import "../lib/chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 contract AssetbuyerTest is Test {

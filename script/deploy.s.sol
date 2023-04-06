@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-import "../contracts/interfaces/IDiamondCut.sol";
-import "../contracts/facets/DiamondCutFacet.sol";
-import "../contracts/facets/DiamondLoupeFacet.sol";
-import "../contracts/facets/OwnershipFacet.sol";
 import "../lib/forge-std/src/Script.sol";
 import "../contracts/Diamond.sol";
-import "../contracts/facets/Assetbuyingfacet.sol";
+import "../contracts/facets/DiamondLoupeFacet.sol";
+import "../contracts/facets/AssetbuyingFacet.sol";
+import "../contracts/interfaces/IDiamondCut.sol";
+import "../contracts/facets/DiamondCutFacet.sol";
+import "../contracts/facets/OwnershipFacet.sol";
+import "../lib/forge-std/src/Vm.sol";
 
 contract DiamondDeployer is Script, IDiamondCut {
     //contract types of facets to be deployed
@@ -18,7 +19,7 @@ contract DiamondDeployer is Script, IDiamondCut {
     Assetbuyingfacet AssetF;
 
 
-   address deployer =  0xE6e2595f5f910c8A6c4cf42267Ca350c6BA8c054;
+   address deployer =  0x7379ec8392c7684cecd0550A688D729717EBBB01;
     function run() public {
         uint256 key = vm.envUint("private_key");
         vm.startBroadcast(key);
@@ -32,7 +33,7 @@ contract DiamondDeployer is Script, IDiamondCut {
         //upgrade diamond with facets
 
         //build cut struct
-        FacetCut[] memory cut = new FacetCut[](2);
+        FacetCut[] memory cut = new FacetCut[](3);
 
         cut[0] = (
             FacetCut({
@@ -49,6 +50,12 @@ contract DiamondDeployer is Script, IDiamondCut {
                 functionSelectors: generateSelectors("OwnershipFacet")
             })
         );
+
+                cut[2] = ( FacetCut({
+            facetAddress: address(AssetF),
+            action: FacetCutAction.Add,
+            functionSelectors: generateSelectors("Assetbuyingfacet")
+        }));
 
         
         IDiamondCut(address(diamond)).diamondCut(cut, address(0x0), "");
@@ -72,19 +79,6 @@ contract DiamondDeployer is Script, IDiamondCut {
         cmd[2] = _facetName;
         bytes memory res = vm.ffi(cmd);
         selectors = abi.decode(res, (bytes4[]));
-    }
-
-       function testAssetFacet() public {
-        run();
-        FacetCut[] memory slice = new FacetCut[](1);
-
-        slice[0] = ( FacetCut({
-            facetAddress: address(AssetF),
-            action: FacetCutAction.Add,
-            functionSelectors: generateSelectors("Assetbuyingfacet")
-        }));
-        IDiamondCut(address(diamond)).diamondCut(slice, address(0), "");
-         DiamondLoupeFacet(address(diamond)).facetAddresses();
     }
     function diamondCut(
         FacetCut[] calldata _diamondCut,

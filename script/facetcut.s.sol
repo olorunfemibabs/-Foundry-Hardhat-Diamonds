@@ -4,7 +4,7 @@ import "../lib/forge-std/src/Script.sol";
 import "../contracts/interfaces/IDiamondCut.sol";
 import "../contracts/facets/DiamondLoupeFacet.sol";
 import "../contracts/facets/OwnershipFacet.sol";
-import "../contracts/facets/Assetbuyingfacet.sol";
+//import "../contracts/facets/Assetbuyingfacet.sol";
 import "../contracts/Diamond.sol";
 
 contract Addfacet is Script, IDiamondCut {

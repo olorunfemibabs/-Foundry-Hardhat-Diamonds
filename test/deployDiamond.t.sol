@@ -7,7 +7,7 @@ import "../contracts/facets/DiamondLoupeFacet.sol";
 import "../contracts/facets/OwnershipFacet.sol";
 import "../lib/forge-std/src/Test.sol";
 import "../contracts/Diamond.sol";
-import "../contracts/facets/Assetbuyingfacet.sol";
+import "../contracts/facets/AssetbuyingFacet.sol";
 
 contract DiamondDeployer is Test, IDiamondCut {
     //contract types of facets to be deployed
